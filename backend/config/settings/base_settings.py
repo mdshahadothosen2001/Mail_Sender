@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import os
+
 from config.EMAIL_HOST import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
 from config.JWT_SETTINGS import JWT_SETTINGS
 

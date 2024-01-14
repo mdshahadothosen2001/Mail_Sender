@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  mail_sender_backend:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./docker/development/Dockerfile
+    container_name: mail_sender_backend
+    command: >
+            sh -c "cd /app/backend &&
+            python manage.py runserver 0.0.0.0:9010 --settings=config.settings.dev_settings"
+    volumes:
+      - .:/app
+    ports:
+      - "9010:9010"
+    networks:
+      - main
+
+networks:
+  main:

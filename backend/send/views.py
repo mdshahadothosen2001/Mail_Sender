@@ -14,6 +14,7 @@ class SendMailView(APIView):
     def post(self, request, *args, **kwargs):
 
         sendMail(request)
-        
-        return Response({"message":"Successfully send your message to this mail address!"})
-                
+
+        return Response(
+            {"message": "Successfully send your message to this mail address!"}
+        )
