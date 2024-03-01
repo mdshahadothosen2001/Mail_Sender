@@ -1,6 +1,8 @@
 from pathlib import Path
+import dj_database_url
 
 import os
+
 
 from config.EMAIL_HOST import EMAIL_HOST_USER, EMAIL_HOST_PASSWORD
 from config.JWT_SETTINGS import JWT_SETTINGS
@@ -8,12 +10,11 @@ from config.JWT_SETTINGS import JWT_SETTINGS
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-@m+w-w)ta)idk)6rcb6b8+w%otz8jd)2^&aws#)xsqvl9e#xh1"
+SECRET_KEY = "django-insecure-*argl2+-pgq(xbp5&#c&j*&u6#-5=5s9ja7lax3jeh!0c1ci6z"
 
-DEBUG = True
+DEBUG = bool(int(os.environ.get("DEBUG")))
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 DJANGO_APPS = [
     "django.contrib.admin",
@@ -34,7 +35,7 @@ LOCAL_APPS = [
     "send",
 ]
 
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS 
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -56,7 +57,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -79,11 +79,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-DATABASES = {
+
+# Caching in Redis
+# https://pypi.org/project/django-redis/
+CACHES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": os.environ.get("REDIS_CONNECTION"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
     }
+}
+
+DATABASES = {
+    "default": dj_database_url.config(
+        default=os.environ.get("DB_CONNECTION"),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -103,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Dhaka"
 
 USE_I18N = True
 
@@ -113,6 +127,9 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+CORS_ALLOW_ALL_ORIGINS = True
+
+APPEND_SLASH = False
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
@@ -122,5 +139,6 @@ EMAIL_HOST_USER = EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = EMAIL_HOST_PASSWORD
 
 CORS_ALLOWED_ORIGINS = [
-    "https://yourmailsender.vercel.app"
+    "http://localhost:5173",
+    "https://bf54-103-125-29-41.ngrok-free.app",
 ]
