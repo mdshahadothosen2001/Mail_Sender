@@ -6,16 +6,16 @@ from django.core.mail import send_mail
 from config.EMAIL_HOST import EMAIL_HOST_USER
 
 
-def sendMail(request):
+def SendMail(request):
 
     email = request.data.get("email")
     subject = request.data.get("subject", " ")
     body = request.data.get("body", " ")
 
     if not email:
-        raise ValidationError("Can't send without mail address")
+        raise ValidationError("Can't send without email address")
 
     try:
-        send_mail(subject, body, EMAIL_HOST_USER, [email])
+        send_mail(subject, body, EMAIL_HOST_USER, email)
     except:
         return Response("Email Address not found! Please double check.")
